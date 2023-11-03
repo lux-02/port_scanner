@@ -4,6 +4,7 @@ import itertools
 import multiprocessing
 
 def syn_scan(target_ip, port):
+    
     try:
         # TCP raw 소켓 생성
         raw_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW)
@@ -50,11 +51,12 @@ def syn_scan(target_ip, port):
     except Exception as e:
         return f"Port {port} state is unknown. Error: {str(e)}"
     finally:
-        raw_socket.close()
+        if 'raw_socket' in locals() and isinstance(raw_socket, socket.socket):
+            raw_socket.close()
 
 def main():
     target_ip = "43.200.177.222"
-    numbers = range(1, 100)
+    numbers = range(1, 1000)
     num_process = 5
 
     with multiprocessing.Pool(processes=num_process) as pool:

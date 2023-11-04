@@ -47,10 +47,14 @@ def scan_port(target_ip, port):
             result = banner_grabbing(target_ip, port)
             if result:
                 port, banner = result
-                socketio.emit('scanResult', {'result': (port, banner)})
+                socketio.emit('scanResult', {'port': port, 'banner': banner})
                 print(f"[+] Port {port} is open: {banner}")
+            else:
+                socketio.emit('scanResult', {'port': port, 'banner': None})
+                print(f"[+] Port {port} is open but no banner retrieved.")
     else:
         print(f"[-] Scanning port {port}...")
+
 
 @socketio.on('startScan')
 def handle_start_scan(json):

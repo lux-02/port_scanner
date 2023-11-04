@@ -10,18 +10,22 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const socketRef = useRef(null);
   
-    useEffect(() => {
-    // WebSocket 연결을 설정합니다.
+  useEffect(() => {
     const socket = io("ws://127.0.0.1:5001");
     socketRef.current = socket;
 
     socket.on("scanResult", (data) => {
-      const result = data.result;
-      console.log(data.result);
+      const result = data;
+      console.log(data);
       if (result) {
-        setResults(prevResults => [...prevResults, result]);
-        }
-
+        setResults((prevResults) => [
+          ...prevResults,
+          { 
+            port: result.port, 
+            banner: result.banner
+          }
+        ]);
+      }
     });
 
     socket.on('connect', () => {
@@ -32,7 +36,6 @@ export default function Home() {
       console.log('Socket Disconnected');
     });
 
-    // useEffect의 뒷정리(cleanup) 함수
     return () => {
       socket.close();
     };
@@ -67,9 +70,9 @@ export default function Home() {
       </div>
       <div className={styles.results}>
         {results.map((result, index) => (
-          <div key={index} className={styles["result-item"]} onClick={() => showDetail(result[0], result[1])}>
-            <strong>{result[0]}: </strong>
-            <span>{parseBanner(result[0], result[1])}</span>
+          <div key={index} className={styles["result-item"]} onClick={() => showDetail(result.port, result.banner)}>
+            <strong>{result.port}</strong>
+            {result.banner ? <span> : {parseBanner(result.port, result.banner)}</span> : ''}
           </div>
         ))}
       </div>
@@ -78,7 +81,7 @@ export default function Home() {
           <div className={styles.detail}>
             <div className={styles.detailBox}>
               <h3>Port: {detail.port}</h3>
-              <p>{detail.banner}</p>
+              <p>{detail.banner || 'Open port without banner.'}</p>
             </div>
           </div>
         )

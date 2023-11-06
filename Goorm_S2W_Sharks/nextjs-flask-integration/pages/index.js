@@ -9,9 +9,9 @@ export default function Home() {
   const [detail, setDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const socketRef = useRef(null);
-  
+
   useEffect(() => {
-    const socket = io("ws://127.0.0.1:5001");
+    const socket = io("ws://3.38.154.124:5001");
     socketRef.current = socket;
 
     socket.on("scanResult", (data) => {
@@ -20,8 +20,8 @@ export default function Home() {
       if (result) {
         setResults((prevResults) => [
           ...prevResults,
-          { 
-            port: result.port, 
+          {
+            port: result.port,
             banner: result.banner
           }
         ]);
@@ -41,7 +41,7 @@ export default function Home() {
     };
   }, []);
 
-    const handleScan = () => {
+  const handleScan = () => {
     if (socketRef.current && socketRef.current.connected) {
       setIsLoading(true);
       socketRef.current.emit("startScan", {
